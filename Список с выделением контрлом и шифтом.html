@@ -1,0 +1,95 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <!--https://learn.javascript.ru/task/selectable-list-->
+    <meta charset="utf-8">
+    <style>
+        .selected {
+            background: #0f0;
+        }
+
+        li {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+Клик на элементе выделяет только его.
+<br> Ctrl(Cmd)+Клик добавляет/убирает элемент из выделенных.
+<br> Shift+Клик добавляет промежуток от последнего кликнутого к выделению.
+<br>
+
+<ul>
+    <li>Кристофер Робин</li>
+    <li>Винни-Пух</li>
+    <li>Ослик Иа</li>
+    <li>Мудрая Сова</li>
+    <li>Кролик. Просто кролик.</li>
+</ul>
+
+<script>
+   var ul = document.querySelector('ul');
+
+   var sel;
+   for(var i = 0; i < document.querySelectorAll('li').length; i++ ) {
+       document.querySelectorAll('li')[i].numb = i;
+       console.log(document.querySelectorAll('li')[i].numb);
+   }
+
+   ul.addEventListener('click', function(event) {
+
+       if(event.target.tagName !== 'LI') return;
+
+
+       if(event.ctrlKey || event.metaKey) {
+           console.log('зажат контрл');
+           if ( event.target.classList.contains('selected') ) {
+
+               event.target.classList.remove('selected');
+               sel = event.target;
+               return;
+           } else {
+               event.target.classList.add('selected');
+               sel = event.target;
+               return;
+           }
+       }
+
+       if (event.shiftKey) {
+           console.log('shift');
+
+           if (event.target.numb - sel.numb > 0) {
+               for (var i = 0; i < event.target.numb - sel.numb; i++) {
+                   document.querySelectorAll('li')[sel.numb + 1 + i].classList.add('selected');
+               }
+           }
+           if (event.target.numb - sel.numb < 0) {
+               for ( var i = 0; i < sel.numb - event.target.numb; i++) {
+                   document.querySelectorAll('li')[sel.numb - 1 - i].classList.add('selected');
+               }
+
+           }
+           if (event.target == sel) return;
+           sel = event.target;
+           return;
+       }
+
+       //if (sel) sel.classList.remove('selected');
+       var selectedAll = document.querySelectorAll('.selected');
+       for (var i = 0; i < selectedAll.length; i++) {
+           selectedAll[i].classList.remove('selected');
+       }
+    
+       event.target.classList.add('selected');
+
+       sel = event.target;
+   })
+
+</script>
+
+</body>
+
+</html>

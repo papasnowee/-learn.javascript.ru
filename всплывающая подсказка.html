@@ -1,0 +1,166 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <!--https://learn.javascript.ru/task/behavior-nested-tooltip-->
+    <meta charset="utf-8">
+    <style>
+        body {
+            height: 2000px;
+            /* подсказка должна работать при прокрутке */
+        }
+
+        #house {
+            margin-top: 50px;
+            width: 400px;
+            border: 1px solid brown;
+        }
+
+        #roof {
+            width: 0;
+            height: 0;
+            border-left: 200px solid transparent;
+            border-right: 200px solid transparent;
+            border-bottom: 20px solid brown;
+            margin-top: -20px;
+        }
+
+        p {
+            text-align: justify;
+            margin: 10px 3px;
+        }
+        .notice {
+            position: absolute;
+            border: solid 1px lightsteelblue ;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            font: 80% serif;
+            font-style: oblique;
+            box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+
+<body>
+
+
+<div data-tooltip="Это – внутренность дома" id="house">
+    <div data-tooltip="Это – крыша" id="roof"></div>
+
+    <p>Жили-были на свете три поросёнка. Три брата.</p>
+
+    <p>Все одинакового роста, кругленькие, розовые, с одинаковыми весёлыми хвостиками.</p>
+
+    <p>Даже имена у них были похожи. Звали поросят Ниф-Ниф, Нуф-Нуф и Наф-Наф. Всё лето они кувыркались в зелёной траве, грелись на солнышке, нежились в лужах.</p>
+
+    <p>Но вот наступила осень. <a href="http://ru.wikipedia.org/wiki/Три_поросёнка" data-tooltip="Читать дальше&hellip;">Наведи на меня</a></p>
+
+</div>
+
+<script>
+    //создаем элемент для подсказки
+    var div = document.createElement('div');
+    div.classList.add('notice');
+    var currentElem = null;
+    house.addEventListener('mouseover', showNotice);
+    house.addEventListener('mouseout', hideNotice);
+
+
+
+    // функция для получения координат элемента относительно окна
+    function getCoords(elem) {
+        // (1)
+        var box = elem.getBoundingClientRect();
+
+        var body = document.body;
+        var docEl = document.documentElement;
+
+        // (2)
+        var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+        var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+
+        // (3)
+        var clientTop = docEl.clientTop || body.clientTop || 0;
+        var clientLeft = docEl.clientLeft || body.clientLeft || 0;
+
+        // (4)
+        var top = box.top + scrollTop - clientTop;
+        var left = box.left + scrollLeft - clientLeft;
+
+        return {
+            top: top,
+            left: left
+        };
+    }
+
+
+    function showNotice(event) {
+        // нас интересуют только элементы с атрибутом 'data-tooltip'
+
+//        if(currentElem) return;
+        var target = event.target;
+
+        while (target != document.body) {
+            if (target.hasAttributes('data-tooltip')) break;
+            target = target.parentNode;
+        }
+
+        if (target == document.body) return;
+        currentElem = target;
+
+        div.innerHTML = target.getAttribute('data-tooltip');
+        document.body.appendChild(div); // вставляем пораньше, что бы у див появились размеры, инчае они равны 0
+
+        // если подсказка не вылезет за верхнюю границу окна
+        if (target.getBoundingClientRect().top > div.offsetHeight + 5) {
+
+            div.style.top = getCoords(target).top - div.offsetHeight - 5 + 'px';
+
+        } else {
+            // а если вылезет, то разместим ее снизу
+            div.style.top = getCoords(target).top + target.offsetHeight + 5  + 'px';
+        }
+
+        // если подсказка вылазит за левый край окна
+        if ( (div.offsetWidth - target.offsetWidth)/2 > target.getBoundingClientRect().left ) {
+            div.style.left = getCoords(target).left - target.getBoundingClientRect().left
+        } else {
+            div.style.left = getCoords(target).left - (div.offsetWidth - target.offsetWidth)/2 + 'px';
+        }
+
+
+
+
+    }
+    // скрыть подсказку
+    function hideNotice(event) {
+
+        if (!currentElem) return;
+
+        var relatedTarget = event.relatedTarget;
+        if (relatedTarget) { // может быть relatedTarget = null
+            while (relatedTarget) {
+                // идём по цепочке родителей и проверяем,
+                // если переход внутрь currentElem - игнорируем это событие
+                if (relatedTarget == currentElem) return;
+
+                relatedTarget = relatedTarget.parentNode;
+                console.log('11');
+            }
+        }
+
+
+//         если подсказка не помещена в документ, то ретерн
+        if (!div.parentElement) return;
+        div.parentElement.removeChild(div);
+        currentElem = null;
+        console.log('hide3');
+    }
+
+//    Алгоритм: проверяем event.target на наличие атрибута , циклом проверяем всех родителей до id=house,
+</script>
+
+</body>
+
+</html>

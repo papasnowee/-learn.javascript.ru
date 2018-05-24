@@ -1,0 +1,93 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  https://learn.javascript.ru/modifying-document
+</head>
+
+<body>
+
+<ul>
+  <li>Животные
+    <ul>
+      <li>Млекопитающие
+        <ul>
+          <li>Коровы</li>
+          <li>Ослы</li>
+          <li>Собаки</li>
+          <li>Тигры</li>
+        </ul>
+      </li>
+      <li>Другие
+        <ul>
+          <li>Змеи</li>
+          <li>Птицы</li>
+          <li>Ящерицы</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Рыбы
+    <ul>
+      <li>Аквариумные
+        <ul>
+          <li>Гуппи</li>
+          <li>Скалярии</li>
+        </ul>
+
+      </li>
+      <li>Морские
+        <ul>
+          <li>Морская форель</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<script>
+    function addText(elem, count) {                     // elem это li
+
+        var elemS = elem.firstChild.data.slice(0, elem.firstChild.data.indexOf("\n") );
+        elemS = elemS + "[" + count + "]";
+        elem.firstChild.data = elemS;
+    }
+
+
+    function countLi(elem) {
+        var count = 0;
+
+        if (elem.querySelector("ul") !== null) {
+            for (var i = 0; i < elem.querySelector('ul').children.length; i++) {   // кол-во ли в ли
+
+                count = count + countLi(elem.querySelector('ul').children[i]);
+
+            }
+            count = count + elem.querySelector('ul').children.length;
+            addText(elem, count);
+        }
+
+
+        
+
+        return count;
+    }
+
+    function ul(ul) {
+        for ( var i = 0; i < ul.children.length; i++) {
+            countLi(ul.children[i]);
+        }
+    }
+
+
+    ul(document.body.querySelector('ul'));
+
+
+
+</script>
+</body>
+
+</html>
+
+ 

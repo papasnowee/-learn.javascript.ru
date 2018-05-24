@@ -1,0 +1,67 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!--https://learn.javascript.ru/task/nice-alt-->
+    <style>
+        .img-replace {
+            float: left;
+            border: 1px solid black;
+        }
+        img {
+            visibility: hidden;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Google -->
+
+<div style="width:114px;height:40px;font-size:32px;letter-spacing:3px" class="img-replace">
+    <span style="color:#1A53F7">G</span><span style="color:#E42131">o</span><span style="color:#FEB819">o</span><span style="color:#164AF2">g</span><span style="color:#00a315">l</span><span style="color:#E42131">e</span>
+</div>
+
+<!-- Яндекс -->
+<div style="width:101px;height:40px;font-size:32px" class="img-replace">
+    <span style="color:#F00">Я</span>ндекс
+</div>
+
+<!-- Bing -->
+<div style="width:100;height:40px;font-size:32px;color:#006dd4;font-weight:bold;letter-spacing: 3px; font-family:Arial" class="img-replace">bing</div>
+
+<hr>
+<!-- картинки (для bing картинки специально нет, чтобы протестировать случай "загрузка не удалась") -->
+
+<img src="https://js.cx/search/google.png" width="114" height="40" alt="Google">
+<img src="https://js.cx/search/yandex.png" width="101" height="40" alt="Яндекс">
+<img src="https://js.cx/search/bing.png" width="101" height="40" alt="Файла нет (bing)">
+
+
+</body>
+<script>
+    var imgs = document.querySelectorAll('img');
+
+    var imgsLength = imgs.length;
+
+    var imgReplace = document.querySelectorAll('.img-replace');
+
+    for (var i = 0; i < imgsLength; i++ ) {
+        imgs[i].onload = (function () { // функция выполняется что бы каджый раз для вложенной возвращенной функции создавался свой LE в котором была своя j
+            var j = i;
+            return function () {
+                document.body.replaceChild(imgs[j], imgReplace[j]);
+                imgs[j].classList.add('img-replace');
+                imgs[j].style.visibility ='visible';
+            };
+
+        })()
+
+    }
+
+    console.log('111')
+</script>
+</html>
+<!--Алгоритм: при загрузке картинки(onload), необходимо заменить див на img . Если поменять порядок картинок или дивов с текстом, то скрипт собьется
+что бы скрипт сам искал соответсвующую картинку и див , надо использовать решение в учебнике -->

@@ -1,0 +1,159 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <!--https://js.cx/task/drag-heroes/solution/-->
+    <meta charset="utf-8">
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #field {
+            background: url(https://js.cx/drag-heroes/field.png);
+            width: 800px;
+            height: 600px;
+            float: left;
+        }
+        /* герои и мяч (переносимые элементы) */
+
+        .hero {
+            background: url(https://js.cx/drag-heroes/heroes.png);
+            width: 130px;
+            height: 128px;
+            float: left;
+        }
+
+        #hero1 {
+            background-position: 0 0;
+        }
+
+        #hero2 {
+            background-position: 0 -128px;
+        }
+
+        #hero3 {
+            background-position: -120px 0;
+        }
+
+        #hero4 {
+            background-position: -125px -128px;
+        }
+
+        #hero5 {
+            background-position: -248px -128px;
+        }
+
+        #hero6 {
+            background-position: -244px 0;
+        }
+
+        .draggable {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>Расставьте супергероев по полю.</h2>
+
+<p>Супергерои и мяч -- это элементы с классом "draggable". Сделайте так, чтобы их можно было переносить.</p>
+
+<p>Важно: если супергероя подносят к низу или верху страницы, она должна автоматически прокручиваться. Если страница помещается на вашем экране целиком и не имеет вертикальной прокрутки -- сделайте окно браузера меньше, чтобы протестировать эту возможность.</p>
+
+<p>Да, и ещё: супергерои ни при каких условиях не должны попасть за край экрана.</p>
+
+<div id="field">
+
+</div>
+
+<div class="hero draggable" id="hero1"></div>
+<div class="hero draggable" id="hero2"></div>
+<div class="hero draggable" id="hero3"></div>
+<div class="hero draggable" id="hero4"></div>
+<div class="hero draggable" id="hero5"></div>
+<div class="hero draggable" id="hero6"></div>
+
+<img src="https://js.cx/drag-heroes/ball.png" class="draggable">
+
+<div style="clear:both"></div>
+
+<script>
+    var scrollInterval;
+    document.onmousedown = function(e){
+        console.log('кнопка нажалась');
+        if (e.target.classList.contains('draggable')) {
+            var draggable = e.target;
+            var coords = getCoords(e.target);
+            var shiftX = e.pageX - coords.left;
+            var shiftY = e.pageY - coords.top;
+            e.target.style.position = 'fixed';
+            document.body.appendChild(e.target);
+            moveAt(e);
+            e.target.style.zIndex = 1000;
+
+            function moveAt(e) {
+                draggable.style.left = e.pageX - shiftX + 'px';
+                draggable.style.top = e.pageY - shiftY + 'px';
+
+                if (e.pageX - shiftX > document.documentElement.clientWidth - draggable.offsetWidth) {
+                    console.log('правый край');
+                    draggable.style.left = document.documentElement.clientWidth - draggable.offsetWidth + 'px';
+                }
+                if (e.pageX - shiftX < 0) {
+                    draggable.style.left = 0 + 'px';
+                }
+                if (e.clientY - shiftY < 0) {
+                    console.log('верхний край');
+                    console.log(document.body.offsetTop);
+                    draggable.style.top = pageYOffset + 'px';
+                    scrollBy(0, -70);
+                }
+                if (e.clientY + draggable.offsetHeight - shiftY > document.documentElement.clientHeight) {
+
+                    draggable.style.top = pageYOffset + document.documentElement.clientHeight - draggable.offsetHeight +  'px';
+                    scrollBy(0, 10);
+                }
+
+
+            }
+            document.onmousemove = function(e) {
+                moveAt(e);
+            };
+            document.onmouseup = function() {
+                document.onmousemove = null;
+                document.onmouseup = null;
+                draggable.style.position = 'absolute';
+
+            };
+
+            e.target.ondragstart = function() {
+                return false;
+            };
+            document.ondragstart = function() {
+                return false;
+            };
+
+
+            function getCoords(elem) {   // кроме IE8-
+                var box = elem.getBoundingClientRect();
+                return {
+                    top: box.top + pageYOffset,
+                    left: box.left + pageXOffset
+                };
+            }
+        }
+        return false;
+    }
+//  лучше использовать opsition: fixed во время перемещения, что бы картинка героя не дергалась, а при mouseup менять позиционирование на absolute
+    // если же использова сразу absolute, то при движении мыши будет происходить скролинг, прокрутка будет меняться, а значит и координаты
+ //    картинки , которые были до срколлинга будут не актуальными и должны будут меняться, поэтому будет дёргание картинки.
+    // в конце нужно сделать return false что бы текст не выделялся зажатой клавишей.
+    //
+</script>
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <!--https://learn.javascript.ru/task/catch-link-navigation-->
+    <meta charset="utf-8">
+    <style>
+        #contents {
+            padding: 5px;
+            border: 1px green solid;
+        }
+    </style>
+</head>
+
+<body>
+
+<fieldset id="contents">
+    <legend>#contents</legend>
+    <p>
+        Как насчет почитать <a id="asfd" href="http://wikipedia.org">Википедию</a>, или посетить <a href="http://w3.org"><i>W3.org</i></a> и узнать про современные стандарты?
+    </p>
+</fieldset>
+
+<script>
+    var contents = document.body.querySelector('#contents');
+    contents.onclick = function(event) {
+
+        var elem = event.target;
+        for ( ;  elem !== contents; ) {
+            if(elem.nodeName !== 'A') {
+                elem = elem.parentNode;
+                continue;
+            }
+            var conf = confirm('согласны перейти?');
+            if (!conf) return false;
+            break;
+
+        }
+    }
+</script>
+</body>
+
+</html>
+
+<!-- Алгоритм следующий: вешаем на элемент с  айди contents обработчик, котоый проверяет: ткнули на элемент <a> , тогда выполняем код: если промпт,
+то ничего, а если не промпт, то return false-->

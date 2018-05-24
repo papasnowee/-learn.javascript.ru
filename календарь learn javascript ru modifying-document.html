@@ -1,0 +1,117 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+
+    td,
+    th {
+      border: 1px solid black;
+      padding: 3px;
+      text-align: center;
+    }
+
+    th {
+      font-weight: bold;
+      background-color: #E6E6E6;
+    }
+  </style>
+  <meta charset="utf-8">
+</head>
+
+<body>
+
+<div id="calendar"></div>
+
+<script>
+    function createCalendar(id, year, month) {
+
+
+        var elem = document.getElementById(id);
+
+        var table = document.createElement('table');
+        elem.appendChild(table);
+
+        var thead = document.createElement('thead');
+        table.appendChild(thead);
+
+        var tr = document.createElement('tr');
+        thead.appendChild(tr);
+
+        var th = document.createElement('th');
+        thead.appendChild(th);
+        th.innerHTML = "пн";
+
+         th = document.createElement('th');
+        thead.appendChild(th);
+        th.innerHTML = "вт";
+
+          th = document.createElement('th');
+         thead.appendChild(th);
+         th.innerHTML = "ср";
+
+         th = document.createElement('th');
+         thead.appendChild(th);
+         th.innerHTML = "чт";
+
+          var th = document.createElement('th');
+          thead.appendChild(th);
+          th.innerHTML = "пт";
+
+         var th = document.createElement('th');
+         thead.appendChild(th);
+         th.innerHTML = "сб";
+
+         var th = document.createElement('th');            
+         thead.appendChild(th);                            
+         th.innerHTML = "вс";                              
+
+        // кол-во дней в месяце
+        var daysNumber = (new Date(year, (month ) ) - new Date(year,  month - 1 ))/24/60/60/1000;
+
+        // день недели первого числа месяца
+        var dateOfFirstDa = new Date(year, month - 1, 1).getDay();
+        console.log(dateOfFirstDa);
+        var k = 1;                   // счетчик созданыых ячеек td , нужен что бы понимать какую цифру помещать в ячейку
+        var weeksNumb;               // кол-во недель в месяце
+
+         if (dateOfFirstDa == 0 )  dateOfFirstDa = 7;   // если воскресенье
+        weeksNumb = Math.ceil(dateOfFirstDa + daysNumber - 1) / 7;
+
+         for (var i = 0; i < weeksNumb; i ++ ) {   // создает строки tr
+
+            var tr =document.createElement('tr');
+            table.appendChild(tr);
+
+            for (var j = 0; j < 7; j++) {       // создает в каждой строке семь ячеек
+
+                if (k < dateOfFirstDa) {        // если неделя начинается не с понедельника, то будет несоклько пустых td
+                    var td = document.createElement('td');
+                    k++;
+                    tr.appendChild(td);
+                    continue;
+                }
+                if ( k - dateOfFirstDa + 1 > daysNumber) {      // если месяц закончился, то создаются пустые ячейки
+                    var td = document.createElement('td');
+                    tr.appendChild(td);
+                    continue;
+                }
+                var td = document.createElement('td');      // в каждую ячейку td присваивает номер дня
+                td.innerHTML = k - dateOfFirstDa + 1;
+                k++;
+                tr.appendChild(td);
+            }
+         }
+
+        // ... ваш код, который генерирует в elem календарь
+    }
+
+    createCalendar('calendar', 2018, 4)
+
+</script>
+</body>
+
+</html>

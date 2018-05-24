@@ -1,0 +1,68 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!--https://learn.javascript.ru/task/capslock-warning-field-->
+</head>
+
+<body>
+
+
+Введите текст(например, пароль) с нажатым CapsLock:
+<input type="text" />
+
+<div style="display:none;color:red" id="capsIndicator">Внимание: нажат CapsLock!</div>
+
+
+</body>
+
+
+<script>
+    var div = document.body.querySelector('#capsIndicator');
+    var input = document.querySelector('input');
+
+    input.onkeypress = function(e) {
+        if (getChar(e).toUpperCase() == getChar(e).toLowerCase()) return;
+        if ((getChar(e) == getChar(e).toUpperCase() && !e.shiftKey) ||
+            (getChar(e) == getChar(e).toLowerCase() && e.shiftKey)) {
+            div.style.display = 'block';
+            input.onkeydown = function (ev) {  // при нажатии капслок появляется/исчезает надпись, вешаем после нажатия символа, что бы знать, был ли нажат капслок при входа на страницу
+                if (ev.keyCode == 20 && div.style.display == 'none') {
+                    div.style.display = 'block';
+                    return;
+                }
+                if (ev.keyCode == 20 && div.style.display == 'block') div.style.display = 'none';
+            };
+
+        } else {
+            div.style.display = 'none';
+
+        }
+    };
+
+
+
+    input.onblur = function () {
+        div.style.display = 'none';
+    };
+
+    // event.type должен быть keypress
+        function getChar(event) {
+            if (event.which == null) { // IE
+                if (event.keyCode < 32) return null; // спец. символ
+                return String.fromCharCode(event.keyCode)
+            }
+
+            if (event.which != 0 && event.charCode != 0) { // все кроме IE
+                if (event.which < 32) return null; // спец. символ
+                return String.fromCharCode(event.which); // остальные
+            }
+
+            return null; // спец. символ
+        }
+
+
+</script>
+
+</html>

@@ -1,0 +1,98 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <!--https://learn.javascript.ru/task/sort-table-->
+    <meta charset="utf-8">
+    <style>
+        th {
+            cursor: pointer;
+        }
+
+        th:hover {
+            background: yellow;
+        }
+    </style>
+</head>
+
+<body>
+
+<table id="grid">
+    <thead>
+    <tr>
+        <th  data-type="number">Возраст</th>
+        <th  data-type="string">Имя</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>5</td>
+        <td>Вася</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Петя</td>
+    </tr>
+    <tr>
+        <td>12</td>
+        <td>Женя</td>
+    </tr>
+    <tr>
+        <td>9</td>
+        <td>Маша</td>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Илья</td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+    var grid = document.querySelector('#grid');
+
+   grid.onclick = function(event) {
+       var colNumb = event.target.cellIndex;
+
+
+       if (event.target.tagName == 'TH') {
+           var table = document.querySelector('table');
+           var tbody = document.querySelector('tbody');
+           var rowsObj = [].slice.call(tbody.rows);
+           table.removeChild(tbody);
+
+           if (isNumeric( rowsObj[0].children[colNumb].innerHTML) ) {
+                rowsObj.sort(function (a, b) {
+                        if (+a.children[colNumb].innerHTML > +b.children[colNumb].innerHTML) return 1;
+                        if (+a.children[colNumb].innerHTML < +b.children[colNumb].innerHTML) return -1;
+                })
+           }  else {
+               rowsObj.sort(function (a, b) {
+                   if (a.children[colNumb].innerHTML > b.children[colNumb].innerHTML) return 1;
+                   if (a.children[colNumb].innerHTML < b.children[colNumb].innerHTML) return -1;
+                })
+           }
+
+           for ( var i = 0; i < rowsObj.length; i++) {
+               tbody.appendChild(rowsObj[i]);
+           }
+           grid.appendChild(tbody);
+       }
+   }
+
+
+
+
+
+
+</script>
+
+</body>
+
+</html>
+<!--создаем массив, в него помещаем циклом строки, удаляем тбоди из таблицы, перед этим поместив в переменную,
+далее сортируем в зависимости от того, числа или строки, добавляем в тбоди аппендчайлдом, так как имеющиеся строки будут сами удаляться.
+ номер столбца по которому сортируем сохраняем в colNumb-->

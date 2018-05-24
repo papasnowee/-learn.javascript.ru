@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!--https://learn.javascript.ru/task/calculate-capitalization-->
+    <style>
+        td select,
+        td input {
+            width: 150px;
+        }
+
+        #diagram td {
+            vertical-align: bottom;
+            text-align: center;
+            padding: 10px;
+        }
+
+        #diagram div {
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+
+Калькулятор процентов, из расчёта 12% годовых.
+<form name="calculator">
+    <table>
+        <tr>
+            <td>Сумма</td>
+            <td>
+                <input name="money" type="text" value="10000">
+            </td>
+        </tr>
+        <tr>
+            <td>Срок в месяцах</td>
+            <td>
+                <select name="months">
+                    <option value="3">3 (минимум)</option>
+                    <option value="6">6 (полгода)</option>
+                    <option value="12" selected>12 (год)</option>
+                    <option value="18">18 (1.5 года)</option>
+                    <option value="24">24 (2 года)</option>
+                    <option value="30">30 (2.5 года)</option>
+                    <option value="36">36 (3 года)</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>С капитализацией</td>
+            <td>
+                <input name="capitalization" type="checkbox">
+            </td>
+        </tr>
+    </table>
+
+
+</form>
+
+
+<table id="diagram">
+    <tr>
+        <th>Было:</th>
+        <th>Станет:</th>
+    </tr>
+    <tr>
+        <th id="money-before"></th>
+        <th id="money-after"></th>
+    </tr>
+    <tr>
+        <td>
+            <div style="background: red;width:40px;height:100px"></div>
+        </td>
+        <td>
+            <div style="background: green;width:40px;height:0" id="height-after"></div>
+        </td>
+    </tr>
+</table>
+
+<script>
+    //вешаем обработчики
+    document.getElementsByName('capitalization')[0].onchange = calc;
+    document.getElementsByName('money')[0].oninput = calc;
+    document.getElementsByName('months')[0].oninput = calc;
+
+    var moneyBefore = document.querySelector('#money-before');
+    var moneyAfter = document.querySelector('#money-after');
+    var heightAfter = document.querySelector('#height-after');
+    var money = document.getElementsByName('money')[0];
+    var select = document.getElementsByName('months')[0];
+
+    calc(); // что бы сразу показывались вычисляемые значения
+
+    function calc() {
+        if (document.getElementsByName('capitalization')[0].checked)  {
+            calcCompoundInterest();
+        } else { calcInterest()}
+    }
+
+    //простые проценты
+    function calcInterest() {
+        moneyBefore.innerHTML = money.value;
+        moneyAfter.innerHTML = Math.floor(money.value * (1 + select.value/100));
+        heightAfter.style.height = Math.floor(100 * (1 + select.value/100)) + 'px'; // 100 - высота первого столбика, от него и отталкиваемся
+    }
+    // сложные проценты
+    function calcCompoundInterest() {
+        moneyBefore.innerHTML = money.value;
+        moneyAfter.innerHTML = Math.round(getCoeff(select.value)* money.value);
+        heightAfter.style.height = Math.round(getCoeff(select.value) * 100) + 'px';
+    }
+    // коэффициент, при сложных процентах
+    function getCoeff(monthsNum) {
+        var num = 1;
+        for (var i = 0; i < monthsNum; i++) {
+            num = num * 1.01;
+        }
+        return num;
+    }
+
+    // запрещаем ввод не цифр
+    document.getElementsByName('money')[0].onkeypress = function(e) {
+        e = e || event;
+
+        if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+        var chr = getChar(e);
+
+        // с null надо осторожно в неравенствах,
+        // т.к. например null >= '0' => true
+        // на всякий случай лучше вынести проверку chr == null отдельно
+        if (chr == null) return;
+
+        if (chr < '0' || chr > '9') {
+            return false;
+        }
+    };
+
+    //получение символа из нажатия клавиши
+    function getChar(event) {
+        if (event.which == null) { // IE
+            if (event.keyCode < 32) return null; // спец. символ
+            return String.fromCharCode(event.keyCode)
+        }
+
+        if (event.which != 0 && event.charCode != 0) { // все кроме IE
+            if (event.which < 32) return null; // спец. символ
+            return String.fromCharCode(event.which); // остальные
+        }
+
+        return null; // спец. символ
+    }
+
+</script>
+
+
+</body>
+
+</html>

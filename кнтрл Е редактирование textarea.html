@@ -1,0 +1,157 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <!--https://learn.javascript.ru/task/hotkeys-->
+    <style>
+        #view,
+        #area {
+            height: 150px;
+            width: 400px;
+            font-family: arial;
+            font-size: 14px;
+        }
+
+        #view {
+            /* padding + border = 3px */
+
+            padding: 2px;
+            border: 1px solid black;
+        }
+
+        #area {
+            display: none;
+            /* replace padding with border (still 3px not to shift the contents) */
+
+            border: 3px groove blue;
+            padding: 0px;
+        }
+
+        #area:focus {
+            outline: none;
+            /* remove focus border in Safari */
+        }
+    </style>
+
+</head>
+
+<body>
+
+<ul>
+    <li>Ctrl-E to start editing.</li>
+    <li>While editing: Ctrl-S to save, Esc to cancel.</li>
+</ul>
+
+
+<textarea id="area"></textarea>
+<div id="view">Text</div>
+
+<script>
+    area.value = 'Text';
+    var areaText;
+    var j = false; // true - вошли в форму, false сохранили или вышли
+
+    runOnKeys( // функция вешает обработчики на клавиши кнтрл + Е, при их сочетании запускается первый аргумент
+        function () {
+                view.style.display = 'none';
+                area.style.display = 'block';
+                area.focus();
+                areaText = area.value;
+                return;
+
+        },
+        17,
+        69
+    );
+
+    runOnKeys1( // функция вешает обработчики на клавиши кнтрл + S, при их сочетании запускается первый аргумент
+        function () {
+            area.style.display = 'none';
+            view.style.display = 'block';
+            view.innerHTML = area.value;
+
+        },
+        17,
+        83
+    );
+
+    window.addEventListener('keydown', function(e) { // при нажатии Esc
+        if ((e.keyCode == 27) && (j === true)) {
+            j = false;
+            area.style.display = 'none';
+            view.style.display = 'block';
+            area.value = areaText;
+            view.innerHTML = areaText;
+        }
+    });
+
+
+
+    function runOnKeys() {
+        var i = 1;
+        var argLength = arguments.length - 1;
+        var argRunOnKeys = arguments;
+        window.addEventListener('keydown', hotkey);
+
+        function hotkey(e) {
+            if (j === true) { // проверка - вошли в форму или нет
+                i = 1;
+                return;
+            }
+            if (e.keyCode == argRunOnKeys[i]) { // если скан-код нажатой клавиши равен сканкоду из списка аргументов
+                if ( i == argLength ) {       // если достигли последнего номера аргумента, значит, пора запускать функцию arguments[0]
+                    argRunOnKeys[0]();
+                    i = 1;
+                    j = true;
+                    e.preventDefault();           // что бы убрать действие по умолчанию
+                    return;
+                }
+                i++;                        // то двигаемся дальше прибавляя к номеру аргумента +1 (i - номер аргумента)
+                return;
+            }
+            i = 1;
+        }
+        window.onkeyup = function() {
+            i = 1;
+        }
+    }
+
+function runOnKeys1() {
+    var i = 1;
+    var argLength = arguments.length - 1;
+    var argRunOnKeys = arguments;
+    window.addEventListener('keydown', hotkey);
+
+    function hotkey(e) {
+        if (j === false) {
+            i = 1;
+            return;
+        }
+        if (e.keyCode == argRunOnKeys[i]) { // если скан-код нажатой клавиши равен сканкоду из списка аргументов
+            if ( i == argLength ) {       // если достигли последнего номера аргумента, значит, пора запускать функцию arguments[0]
+                argRunOnKeys[0]();
+                i = 1;
+                j = false;
+                e.preventDefault();           // что бы убрать действие по умолчанию
+                return;
+            }
+            i++;                        // то двигаемся дальше прибавляя к номеру аргумента +1 (i - номер аргумента)
+            return;
+        }
+        i = 1;
+    }
+    window.onkeyup = function() {
+        i = 1;
+    }
+}
+
+
+
+
+
+
+</script>
+
+</body>
+
+</html>

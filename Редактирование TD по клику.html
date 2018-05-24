@@ -1,0 +1,248 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!--https://learn.javascript.ru/task/edit-td-click-->
+</head>
+<style>
+    /* общие стили для таблицы */
+    textarea {
+
+        /*white-space: nowrap;*/
+        text-align: center;
+        vertical-align: middle;
+
+    }
+
+    th {
+        text-align: center;
+        font-weight: bold;
+    }
+
+    td {
+        width: 150px;
+        white-space: nowrap;
+        text-align: center;
+        vertical-align: middle;
+        padding: 0px;
+    }
+
+    .nw {
+        background-color: #999;
+    }
+
+    .n {
+        background-color: #03f;
+        color: #fff;
+    }
+
+    .ne {
+        background-color: #ff6;
+    }
+
+    .w {
+        background-color: #ff0;
+    }
+
+    .c {
+        background-color: #60c;
+        color: #fff;
+    }
+
+    .e {
+        background-color: #09f;
+        color: #fff;
+    }
+
+    .sw {
+        background-color: #963;
+        color: #fff;
+    }
+
+    .s {
+        background-color: #f60;
+        color: #fff;
+    }
+
+    .se {
+        background-color: #0c3;
+        color: #fff;
+    }
+    textarea:focus, input:focus
+    {
+        outline: none;
+    }
+
+</style>
+<body>
+
+
+
+
+<p>Кликните на ячейке для начала редактирования. Когда закончите -- нажмите OK или CANCEL.</p>
+
+<table id="bagua-table">
+    <tr>
+        <th colspan="3"><em>Bagua</em> Chart: Direction, Element, Color, Meaning</th>
+    </tr>
+    <tr>
+        <td class="nw"><strong>Northwest</strong>
+            <br>Metal
+            <br>Silver
+            <br>Elders
+        </td>
+        <td class="n"><strong>North</strong>
+            <br>Water
+            <br>Blue
+            <br>Change
+        </td>
+        <td class="ne"><strong>Northeast</strong>
+            <br>Earth
+            <br>Yellow
+            <br>Direction
+        </td>
+    </tr>
+    <tr>
+        <td class="w"><strong>West</strong>
+            <br>Metal
+            <br>Gold
+            <br>Youth
+        </td>
+        <td class="c"><strong>Center</strong>
+            <br>All
+            <br>Purple
+            <br>Harmony
+        </td>
+        <td class="e"><strong>East</strong>
+            <br>Wood
+            <br>Blue
+            <br>Future
+        </td>
+    </tr>
+    <tr>
+        <td class="sw"><strong>Southwest</strong>
+            <br>Earth
+            <br>Brown
+            <br>Tranquility
+        </td>
+        <td class="s"><strong>South</strong>
+            <br>Fire
+            <br>Orange
+            <br>Fame
+        </td>
+        <td class="se"><strong>Southeast</strong>
+            <br>Wood
+            <br>Green
+            <br>Romance
+        </td>
+    </tr>
+</table>
+
+<script>
+    var tableElem = document.getElementById("bagua-table");
+    //создаем textarea
+    var area = document.createElement('textarea');
+    area.style.position = 'absolute';
+    area.style.resize = 'none';
+    area.style.borderColor = 'white';
+    area.style.visibility = 'hidden';
+    area.classList.add('area');
+    document.body.appendChild(area);
+
+    // создаем форму для кнопок
+    var formElem = document.createElement('form');
+    formElem.style.visibility = 'none';
+    formElem.style.position = 'absolute';
+    document.body.appendChild(formElem);
+
+    var curTD;
+    var parentElem;
+
+    //создаем кнопку ОК
+    var buttOk = document.createElement('input');
+    formElem.appendChild(buttOk);
+    buttOk.type = 'button';
+    buttOk.value = 'OK';
+
+    buttOk.onclick = function() {
+        curTD.innerHTML = area.value;
+        area.style.visibility = 'hidden';
+        formElem.style.visibility = 'hidden';
+        console.dir(area);
+    };
+
+    //создаем кнопку CANCEL
+    var buttCancel = document.createElement('input');
+    buttCancel.type = 'button';
+    buttCancel.value = 'CANCEL';
+    formElem.appendChild(buttCancel);
+
+    buttCancel.onclick = function() {
+        area.style.visibility = 'hidden';
+        formElem.style.visibility = 'hidden';
+    };
+
+    // обработчик на TD
+    tableElem.addEventListener('click', tdClick);
+
+    function tdClick(e) {
+        if (area.style.visibility == 'visible') return;  // если мызашли внутрь ячейки, то клик на другие ячейки не должен запускать обработчик
+        parentElem = e.target;
+        console.dir(parentElem.tagName);
+        while (parentElem.tagName !== "TD" && parentElem !== tableElem ) {
+            parentElem = parentElem.parentElement;
+        }
+        if (parentElem.tagName == 'TD') {
+
+            curTD = parentElem;
+            area.style.width = parentElem.offsetWidth - parseInt(getComputedStyle(tableElem).borderSpacing, 10)*2 - 2 + 'px';
+            area.style.height = parentElem.offsetHeight -6 + 'px';
+            area.style.top = getCoords(parentElem).top + 'px';
+            area.style.left = getCoords(parentElem).left +'px';
+            area.value = parentElem.innerHTML;
+            area.style.visibility = 'visible';
+            area.focus();
+
+            formElem.style.left = getCoords(parentElem).left +'px';
+            formElem.style.top = getCoords(parentElem).top + parentElem.offsetHeight + parseInt(getComputedStyle(tableElem).borderSpacing, 10)*2 + 'px';
+            formElem.style.visibility = 'visible';
+        }
+
+        if ( parentElem == tableElem ) return;
+
+    }
+
+
+
+    function getCoords(elem) {
+        // (1)
+        var box = elem.getBoundingClientRect();
+
+        var body = document.body;
+        var docEl = document.documentElement;
+
+        // (2)
+        var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+        var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+
+        // (3)
+        var clientTop = docEl.clientTop || body.clientTop || 0;
+        var clientLeft = docEl.clientLeft || body.clientLeft || 0;
+
+        // (4)
+        var top = box.top + scrollTop - clientTop;
+        var left = box.left + scrollLeft - clientLeft;
+
+        return {
+            top: top,
+            left: left
+        };
+    }
+
+
+</script>
+
+</body>
+
+</html>

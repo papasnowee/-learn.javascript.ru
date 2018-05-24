@@ -1,0 +1,61 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <!--https://learn.javascript.ru/task/check-sync-keydown-->
+    <meta charset="utf-8">
+</head>
+
+<body>
+
+<script>
+    /* ваш код .. .*/
+    var i = 1;
+
+    function runOnKeys() {
+        var argLength = arguments.length - 1;
+        var argRunOnKeys = arguments;
+
+        window.onkeydown = function(e) {
+            console.log(e.keyCode);
+            if (e.keyCode == argRunOnKeys[i]) { // если скан-код нажатой клавиши равен сканкоду из списка аргументов
+                if ( i == argLength ) {        // если достигли последнего номера аргумента, значит, пора запускать функцию arguments[0]
+                    argRunOnKeys[0]();
+                    i = 1;
+                    return;
+                }
+                i++;                        // то двигаемся дальше прибавляя к номеру аргумента +1 (i - номер аргумента)
+                return;
+            }
+            i = 1;
+        };
+
+        window.onkeyup = function() {
+            i = 1;
+        }
+    }
+
+    runOnKeys(
+        function () {console.log('rabotaet')},
+//        "Q".charCodeAt(0),
+        87,
+        69,
+        82  
+    );
+
+
+
+
+
+// алгоритм: если e.keyCOde = первому члену массива, то присваиваем n = arguments[1], если нет то
+
+// если сорвалось, то обнуляем n, а как узнать, что сорвалось? сорвалось это, когда n был несколько циклов равен нужным значениям,
+    // а потом перестал быть равным. И вот после обнуления мы что делаем?
+
+
+
+
+</script>
+</body>
+
+</html>
