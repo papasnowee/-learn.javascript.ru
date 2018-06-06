@@ -102,8 +102,8 @@
     //простые проценты
     function calcInterest() {
         moneyBefore.innerHTML = money.value;
-        moneyAfter.innerHTML = Math.floor(money.value * (1 + select.value/100));
-        heightAfter.style.height = Math.floor(100 * (1 + select.value/100)) + 'px'; // 100 - высота первого столбика, от него и отталкиваемся
+        moneyAfter.innerHTML = Math.round(money.value * (1 + select.value/100));
+        heightAfter.style.height = Math.round(100 * (1 + select.value/100)) + 'px'; // 100 - высота первого столбика, от него и отталкиваемся
     }
     // сложные проценты
     function calcCompoundInterest() {
