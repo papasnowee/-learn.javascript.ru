@@ -39,8 +39,14 @@
        console.log(document.querySelectorAll('li')[i].numb);
    }
 
-   ul.addEventListener('click', function(event) {
+   ul.addEventListener('mousemove', function(event) {
+       event.preventDefault();
+   });
 
+   
+
+   ul.addEventListener('click', function(event) {
+       event.preventDefault();
        if(event.target.tagName !== 'LI') return;
 
 
@@ -59,17 +65,18 @@
        }
 
        if (event.shiftKey) {
-           console.log('shift');
 
            if (event.target.numb - sel.numb > 0) {
                for (var i = 0; i < event.target.numb - sel.numb; i++) {
                    document.querySelectorAll('li')[sel.numb + 1 + i].classList.add('selected');
                }
+               return;
            }
            if (event.target.numb - sel.numb < 0) {
                for ( var i = 0; i < sel.numb - event.target.numb; i++) {
                    document.querySelectorAll('li')[sel.numb - 1 - i].classList.add('selected');
                }
+               return;
 
            }
            if (event.target == sel) return;
@@ -86,6 +93,7 @@
        event.target.classList.add('selected');
 
        sel = event.target;
+       return;
    })
 
 </script>
